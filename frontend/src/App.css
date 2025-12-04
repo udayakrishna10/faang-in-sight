@@ -18,13 +18,21 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;   /* center shell horizontally */
-  align-items: flex-start;   /* keep content starting near the top */
+  align-items: center;       /* ⟵ center shell vertically */
   padding: 16px;
   box-sizing: border-box;
 }
 
+.app-shell {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* children fill shell width */
+}
 
-
+/* Header */
 .app-header {
   text-align: center;
   margin-bottom: 16px;
@@ -36,20 +44,14 @@ body {
   display: block;
   margin: 0 auto 8px auto;
 }
-.app-shell {
-  width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;          /* full centering */
-  display: flex;
-  flex-direction: column;
-  align-items: center;     /* keeps header, footer, columns centered */
-}
+
 .app-tagline {
   margin: 0;
   color: #e5e7eb;
   font-size: 0.95rem;
 }
 
+/* Main */
 .app-main {
   width: 100%;
   display: flex;
@@ -58,22 +60,27 @@ body {
   justify-content: center;
 }
 
-
-
 /* Columns */
-.app-column {
+/* FIXED LAYOUT — NO MOVING */
+.app-main {
+  width: 100%;
+  max-width: 1180px;
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
 }
 
+/* Left column always same width */
 .app-column-main {
-  flex: 3;
+  width: 700px;   /* fixed width — adjust if needed */
 }
 
+/* Right column always same width */
 .app-column-side {
-  flex: 2;
+  width: 380px;   /* fixed width — adjust if needed */
 }
+
 
 /* Cards */
 .card {
@@ -218,8 +225,21 @@ body {
   background: #e5e7eb;
 }
 
-/* Chart wrapper */
+/* Chart */
 .chart-wrapper {
+  margin-top: 10px;
+}
+
+.chart-placeholder {
+  height: 360px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #64748b;
+  font-size: 0.95rem;
+  border: 1px dashed #cbd5e1;
   margin-top: 10px;
 }
 
@@ -394,4 +414,42 @@ body {
     width: 100%;
     text-align: center;
   }
+}
+/* ---------------- STATIC SPACING + FIXED SNAPSHOT ---------------- */
+
+.card {
+  margin-bottom: 22px; /* consistent spacing between all cards */
+}
+
+/* Fix FAANG snapshot height */
+.snapshot-fixed {
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Static layout (no shifting) */
+.app-main {
+  width: 100%;
+  max-width: 1180px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 26px;
+}
+
+.app-column-main {
+  width: 700px;
+}
+
+.app-column-side {
+  width: 380px;
+}
+
+/* Chart stays same height */
+.chart-placeholder,
+.chart-wrapper {
+  width: 100%;
+  height: 360px;
 }

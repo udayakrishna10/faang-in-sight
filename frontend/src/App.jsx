@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 import axios from "axios";
 import "./App.css";
-import logo from "./assets/faang-logo.png"; 
+import logo from "./assets/CROWN.png";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
@@ -10,7 +10,7 @@ function App() {
   const [question, setQuestion] = useState("");
   const [aiAnswer, setAiAnswer] = useState("");
   const [chartData, setChartData] = useState(null);
-  const [selectedTicker, setSelectedTicker] = useState("AAPL");
+  const [selectedTicker, setSelectedTicker] = useState(null); // ⟵ no default AAPL
 
   const [newsSummary, setNewsSummary] = useState("");
   const [newsArticles, setNewsArticles] = useState([]);
@@ -120,294 +120,308 @@ function App() {
 
   // ---------- On mount ----------
   useEffect(() => {
+    // Only load dashboard; do NOT auto-select AAPL
     loadDashboard();
-    handleSelectTicker("AAPL");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="app-root">
-    <div className="app-shell">
+      <div className="app-shell">
+        {/* HEADER */}
+        <header className="app-header">
+          <img src={logo} alt="FAANG in Sight logo" className="app-logo" />
+          <p className="app-tagline">
+            AI-powered insights for Apple, Amazon, Meta, Netflix & Google
+          </p>
+        </header>
 
-      {/* HEADER */}
-      <header className="app-header">
-        <img src={logo} alt="FAANG in Sight logo" className="app-logo" />
-        <p className="app-tagline">
-          AI-powered insights for Apple, Amazon, Meta, Netflix & Google
-        </p>
-      </header>
-
-      {/* MAIN CONTENT */}
-      <main className="app-main">
-        {/* LEFT COLUMN */}
-        <div className="app-column app-column-main">
-          {/* Ask AI */}
-          <section className="card card-full">
-            <h2 className="card-title">💬 Ask the AI Analyst</h2>
-            <p className="card-subtitle">
-              Ask about trends, momentum, or how two FAANG names compare.
-            </p>
-            <textarea
-              rows="3"
-              className="text-input"
-              placeholder="Example: Compare recent performance between Apple and Amazon."
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-            />
-            <button className="btn btn-primary" onClick={askAI}>
-              🚀 Ask AI
-            </button>
-
-            {aiAnswer && (
-              <div className="card card-nested">
-                <h3 className="nested-title">🤖 AI says</h3>
-                <p className="nested-body">{aiAnswer}</p>
-              </div>
-            )}
-          </section>
-
-          {/* Chart */}
-          <section className="card card-full">
-            <div className="card-header-row">
-              <h2 className="card-title">📈 Price & Moving Averages</h2>
-            </div>
-            <div className="pill-row">
-              {TICKERS.map((t) => (
-                <button
-                  key={t}
-                  onClick={() => handleSelectTicker(t)}
-                  className={
-                    t === selectedTicker ? "pill pill-active" : "pill pill-idle"
-                  }
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-            <p className="card-subtitle small">
-              Selecting a ticker updates the chart and sentiment below.
-            </p>
-
-            {chartData && (
-              <div className="chart-wrapper">
-                <Plot
-                  data={[
-                    {
-                      x: chartData.points.map((p) => p.trade_date),
-                      y: chartData.points.map((p) => p.close),
-                      type: "scatter",
-                      mode: "lines",
-                      name: `${chartData.ticker} Close`,
-                    },
-                    {
-                      x: chartData.points.map((p) => p.trade_date),
-                      y: chartData.points.map((p) => p.ma_20),
-                      type: "scatter",
-                      mode: "lines",
-                      name: "MA 20",
-                    },
-                    {
-                      x: chartData.points.map((p) => p.trade_date),
-                      y: chartData.points.map((p) => p.ma_50),
-                      type: "scatter",
-                      mode: "lines",
-                      name: "MA 50",
-                    },
-                  ]}
-                  layout={{
-                    title: "",
-                    autosize: true,
-                    legend: { orientation: "h" },
-                    margin: { t: 10, l: 40, r: 10, b: 40 },
-                  }}
-                  style={{ width: "100%", height: "360px" }}
-                />
-              </div>
-            )}
-          </section>
-
-          {/* News & Sentiment */}
-          <section className="card card-full">
-            <h2 className="card-title">📰 News Sentiment</h2>
-            <p className="card-subtitle small">
-              Stock-focused headlines from reputable finance outlets for{" "}
-              <strong>{selectedTicker}</strong>.
-            </p>
-
-            {loadingNews && <p className="muted">Loading news…</p>}
-
-            {!loadingNews && newsSummary && (
-              <div className="card card-nested">
-                <h3 className="nested-title">Sentiment summary</h3>
-                <p className="nested-body">{newsSummary}</p>
-              </div>
-            )}
-
-            {!loadingNews && newsArticles.length > 0 && (
-              <div className="news-list">
-                <h4 className="nested-title">Top headlines</h4>
-                <ul>
-                  {newsArticles.map((a, idx) => (
-                    <li key={idx}>
-                      <span className="news-source">
-                        {a.source ? `[${a.source}] ` : ""}
-                      </span>
-                      {a.url ? (
-                        <a
-                          href={a.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="news-link"
-                        >
-                          {a.title}
-                        </a>
-                      ) : (
-                        a.title
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {!loadingNews && !newsSummary && newsArticles.length === 0 && (
-              <p className="muted">
-                Select a ticker above to load its latest news and sentiment.
+        {/* MAIN CONTENT */}
+        <main className="app-main">
+          {/* LEFT COLUMN */}
+          <div className="app-column app-column-main">
+            {/* Ask AI */}
+            <section className="card card-full">
+              <h2 className="card-title">💬 Ask the AI Analyst</h2>
+              <p className="card-subtitle">
+                Ask about trends, momentum, or how two FAANG names compare.
               </p>
-            )}
-          </section>
-        </div>
+              <textarea
+                rows="3"
+                className="text-input"
+                placeholder="Example: Compare recent performance between Apple and Amazon."
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+              <button className="btn btn-primary" onClick={askAI}>
+                🚀 Ask AI
+              </button>
 
-        {/* RIGHT COLUMN */}
-        <div className="app-column app-column-side">
-          {/* FAANG Snapshot */}
-          <section className="card">
-            <h2 className="card-title">📊 FAANG Snapshot (30 days)</h2>
-            <p className="card-subtitle small">
-              Quick view of price, return, and RSI for each name.
-            </p>
+              {aiAnswer && (
+                <div className="card card-nested">
+                  <h3 className="nested-title">🤖 AI says</h3>
+                  <p className="nested-body">{aiAnswer}</p>
+                </div>
+              )}
+            </section>
 
-            <div className="grid-cards">
-              {dashboard &&
-                dashboard.tickers &&
-                dashboard.tickers.map((t) => (
-                  <div
-                    key={t.ticker}
+            {/* Chart */}
+            <section className="card card-full">
+              <div className="card-header-row">
+                <h2 className="card-title">📈 Price & Moving Averages</h2>
+              </div>
+
+              <div className="pill-row">
+                {TICKERS.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => handleSelectTicker(t)}
                     className={
-                      t.last_daily_return > 0
-                        ? "mini-card mini-card-up"
-                        : "mini-card mini-card-down"
+                      t === selectedTicker
+                        ? "pill pill-active"
+                        : "pill pill-idle"
                     }
                   >
-                    <div className="mini-header">
-                      <span className="mini-ticker">{t.ticker}</span>
-                      <span className="mini-date">{t.last_date}</span>
-                    </div>
-                    <div className="mini-body">
-                      <div className="mini-line">
-                        Close:{" "}
-                        <strong>
-                          {t.last_close != null
-                            ? `$${t.last_close.toFixed(2)}`
-                            : "—"}
-                        </strong>
-                      </div>
-                      <div className="mini-line">
-                        Daily:{" "}
-                        <span
-                          className={
-                            t.last_daily_return >= 0 ? "up-text" : "down-text"
-                          }
-                        >
-                          {t.last_daily_return != null
-                            ? `${(t.last_daily_return * 100).toFixed(2)}%`
-                            : "—"}
-                        </span>
-                      </div>
-                      <div className="mini-line muted">
-                        RSI 14:{" "}
-                        {t.last_rsi != null
-                          ? t.last_rsi.toFixed(1)
-                          : "—"}
-                      </div>
-                    </div>
-                  </div>
+                    {t}
+                  </button>
                 ))}
-              {!dashboard && (
-                <p className="muted">Loading FAANG snapshot…</p>
+              </div>
+
+              <p className="card-subtitle small">
+                {selectedTicker
+                  ? "Selecting a ticker updates the chart and sentiment below."
+                  : "Select a ticker above to load its chart and sentiment."}
+              </p>
+
+              {/* Placeholder always reserves space */}
+              {!chartData && (
+                <div className="chart-placeholder">
+                  <p>Chart will appear here once you select a ticker.</p>
+                </div>
               )}
-            </div>
-          </section>
 
-          {/* Compare Two Stocks */}
-          <section className="card">
-            <h2 className="card-title">⚖️ Compare Two FAANG Stocks</h2>
-            <p className="card-subtitle small">
-              Choose any two tickers and let the AI craft a side-by-side view.
-            </p>
+              {chartData && (
+                <div className="chart-wrapper">
+                  <Plot
+                    data={[
+                      {
+                        x: chartData.points.map((p) => p.trade_date),
+                        y: chartData.points.map((p) => p.close),
+                        type: "scatter",
+                        mode: "lines",
+                        name: `${chartData.ticker} Close`,
+                      },
+                      {
+                        x: chartData.points.map((p) => p.trade_date),
+                        y: chartData.points.map((p) => p.ma_20),
+                        type: "scatter",
+                        mode: "lines",
+                        name: "MA 20",
+                      },
+                      {
+                        x: chartData.points.map((p) => p.trade_date),
+                        y: chartData.points.map((p) => p.ma_50),
+                        type: "scatter",
+                        mode: "lines",
+                        name: "MA 50",
+                      },
+                    ]}
+                    layout={{
+                      title: "",
+                      autosize: true,
+                      legend: { orientation: "h" },
+                      margin: { t: 10, l: 40, r: 10, b: 40 },
+                    }}
+                    style={{ width: "100%", height: "360px" }}
+                  />
+                </div>
+              )}
+            </section>
 
-            <div className="compare-row">
-              <div className="compare-select">
-                <label>Stock A</label>
-                <select
-                  value={compareTickers.left}
-                  onChange={(e) =>
-                    setCompareTickers((prev) => ({
-                      ...prev,
-                      left: e.target.value,
-                    }))
-                  }
-                >
-                  {TICKERS.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
+            {/* News & Sentiment */}
+            <section className="card card-full">
+              <h2 className="card-title">📰 News Sentiment</h2>
+              <p className="card-subtitle small">
+                Stock-focused headlines from reputable finance outlets for{" "}
+                <strong>{selectedTicker || "a selected stock"}</strong>.
+              </p>
+
+              {loadingNews && <p className="muted">Loading news…</p>}
+
+              {!loadingNews && newsSummary && (
+                <div className="card card-nested">
+                  <h3 className="nested-title">Sentiment summary</h3>
+                  <p className="nested-body">{newsSummary}</p>
+                </div>
+              )}
+
+              {!loadingNews && newsArticles.length > 0 && (
+                <div className="news-list">
+                  <h4 className="nested-title">Top headlines</h4>
+                  <ul>
+                    {newsArticles.map((a, idx) => (
+                      <li key={idx}>
+                        <span className="news-source">
+                          {a.source ? `[${a.source}] ` : ""}
+                        </span>
+                        {a.url ? (
+                          <a
+                            href={a.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="news-link"
+                          >
+                            {a.title}
+                          </a>
+                        ) : (
+                          a.title
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {!loadingNews && !newsSummary && newsArticles.length === 0 && (
+                <p className="muted">
+                  Select a ticker above to load its latest news and sentiment.
+                </p>
+              )}
+            </section>
+          </div>
+
+          {/* RIGHT COLUMN */}
+          <div className="app-column app-column-side">
+            {/* FAANG Snapshot */}
+            <section className="card">
+              <h2 className="card-title">📊 FAANG Snapshot (30 days)</h2>
+              <p className="card-subtitle small">
+                Quick view of price, return, and RSI for each name.
+              </p>
+
+              <div className="grid-cards">
+                {dashboard &&
+                  dashboard.tickers &&
+                  dashboard.tickers.map((t) => (
+                    <div
+                      key={t.ticker}
+                      className={
+                        t.last_daily_return > 0
+                          ? "mini-card mini-card-up"
+                          : "mini-card mini-card-down"
+                      }
+                    >
+                      <div className="mini-header">
+                        <span className="mini-ticker">{t.ticker}</span>
+                        <span className="mini-date">{t.last_date}</span>
+                      </div>
+                      <div className="mini-body">
+                        <div className="mini-line">
+                          Close:{" "}
+                          <strong>
+                            {t.last_close != null
+                              ? `$${t.last_close.toFixed(2)}`
+                              : "—"}
+                          </strong>
+                        </div>
+                        <div className="mini-line">
+                          Daily:{" "}
+                          <span
+                            className={
+                              t.last_daily_return >= 0
+                                ? "up-text"
+                                : "down-text"
+                            }
+                          >
+                            {t.last_daily_return != null
+                              ? `${(t.last_daily_return * 100).toFixed(2)}%`
+                              : "—"}
+                          </span>
+                        </div>
+                        <div className="mini-line muted">
+                          RSI 14:{" "}
+                          {t.last_rsi != null
+                            ? t.last_rsi.toFixed(1)
+                            : "—"}
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </select>
+                {!dashboard && <p className="muted">Loading FAANG snapshot…</p>}
+              </div>
+            </section>
+
+            {/* Compare Two Stocks */}
+            <section className="card">
+              <h2 className="card-title">⚖️ Compare Two FAANG Stocks</h2>
+              <p className="card-subtitle small">
+                Choose any two tickers and let the AI craft a side-by-side view.
+              </p>
+
+              <div className="compare-row">
+                <div className="compare-select">
+                  <label>Stock A</label>
+                  <select
+                    value={compareTickers.left}
+                    onChange={(e) =>
+                      setCompareTickers((prev) => ({
+                        ...prev,
+                        left: e.target.value,
+                      }))
+                    }
+                  >
+                    {TICKERS.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="compare-select">
+                  <label>Stock B</label>
+                  <select
+                    value={compareTickers.right}
+                    onChange={(e) =>
+                      setCompareTickers((prev) => ({
+                        ...prev,
+                        right: e.target.value,
+                      }))
+                    }
+                  >
+                    {TICKERS.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              <div className="compare-select">
-                <label>Stock B</label>
-                <select
-                  value={compareTickers.right}
-                  onChange={(e) =>
-                    setCompareTickers((prev) => ({
-                      ...prev,
-                      right: e.target.value,
-                    }))
-                  }
-                >
-                  {TICKERS.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+              <button
+                className="btn btn-secondary"
+                onClick={compareStocks}
+                disabled={loadingCompare}
+              >
+                {loadingCompare ? "Comparing…" : "Compare"}
+              </button>
 
-            <button
-              className="btn btn-secondary"
-              onClick={compareStocks}
-              disabled={loadingCompare}
-            >
-              {loadingCompare ? "Comparing…" : "Compare"}
-            </button>
+              {compareAnalysis && (
+                <div className="card card-nested compare-output">
+                  <h3 className="nested-title">AI comparison</h3>
+                  <p className="nested-body">{compareAnalysis}</p>
+                </div>
+              )}
+            </section>
+          </div>
+        </main>
 
-            {compareAnalysis && (
-              <div className="card card-nested compare-output">
-                <h3 className="nested-title">AI comparison</h3>
-                <p className="nested-body">{compareAnalysis}</p>
-              </div>
-            )}
-          </section>
-        </div>
-      </main>
-
-      <footer className="app-footer">
-        <span>© {new Date().getFullYear()} FAANG in Sight · Built by Udaya Krishna Karanam</span>
-      </footer>
-    </div>
+        <footer className="app-footer">
+          <span>
+            © {new Date().getFullYear()} FAANG in Sight · Built by Udaya Krishna
+            Karanam
+          </span>
+        </footer>
+      </div>
     </div>
   );
 }
