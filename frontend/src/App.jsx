@@ -127,6 +127,8 @@ function App() {
 
   return (
     <div className="app-root">
+    <div className="app-shell">
+
       {/* HEADER */}
       <header className="app-header">
         <img src={logo} alt="FAANG in Sight logo" className="app-logo" />
@@ -405,6 +407,7 @@ function App() {
       <footer className="app-footer">
         <span>© {new Date().getFullYear()} FAANG in Sight · Built by Udaya Krishna Karanam</span>
       </footer>
+    </div>
     </div>
   );
 }

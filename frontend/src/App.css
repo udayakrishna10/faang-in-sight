@@ -17,11 +17,13 @@ body {
 .app-root {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;   /* center shell horizontally */
+  align-items: flex-start;   /* keep content starting near the top */
   padding: 16px;
   box-sizing: border-box;
 }
+
+
 
 .app-header {
   text-align: center;
@@ -32,10 +34,16 @@ body {
   width: 120px;
   height: auto;
   display: block;
-  margin: 0 auto 12px auto;   /* was 8px */
+  margin: 0 auto 8px auto;
 }
-
-
+.app-shell {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;          /* full centering */
+  display: flex;
+  flex-direction: column;
+  align-items: center;     /* keeps header, footer, columns centered */
+}
 .app-tagline {
   margin: 0;
   color: #e5e7eb;
@@ -44,13 +52,12 @@ body {
 
 .app-main {
   width: 100%;
-  max-width: 1180px;
   display: flex;
   gap: 16px;
   align-items: flex-start;
-  justify-content: center;       /* ← NEW */
-  margin: 0 auto;                /* ← NEW */
+  justify-content: center;
 }
+
 
 
 /* Columns */
