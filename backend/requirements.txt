@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pandas
+yfinance
+google-cloud-bigquery
+openai
+python-dotenv
+echo "db-dtypes" >> requirements.txt
+echo "pyarrow" >> requirements.txt
+echo "requests" >> requirements.txt
