@@ -124,7 +124,7 @@ app = FastAPI(
 origins = [
     "http://127.0.0.1:5173",
     "http://localhost:5173",
-    "https://faang-in-sight.vercel.app"
+    "https://faang-in-sight.vercel.app",      # ← your production site
 ]
 
 app.add_middleware(
@@ -134,6 +134,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 app.add_middleware(
     CORSMiddleware,
