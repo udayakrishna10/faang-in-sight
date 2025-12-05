@@ -120,17 +120,21 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# CORS configuration
+origins = [
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+    "https://faang-in-sight-uk.vercel.app",  
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5173",
-        "http://localhost:5173",
-        "https://faang-in-sight-uk.vercel.app", 
-        "*", 
-    ],
-    allow_credentials=False,
-    allow_methods=["*"],     
-    allow_headers=["*"], 
+    allow_origins=origins,
+    allow_credentials=False,   
+    allow_methods=["*"],       
+    allow_headers=["*"],
+)
+
 
 
 
