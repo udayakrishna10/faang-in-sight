@@ -5,7 +5,7 @@ import "./App.css";
 import logo from "./assets/CROWN.png";
 
 const API_BASE =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+  import.meta.env.VITE_API_BASE_URL || "https://faang-backend-1007680875469.us-central1.run.app";
 
 function App() {
   const [question, setQuestion] = useState("");
